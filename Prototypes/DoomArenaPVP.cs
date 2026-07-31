@@ -13,7 +13,7 @@ using Skua.Core.Options;
 
 #nullable enable
 
-public class PvPArmy
+public class DoomArenaPVP
 {
     private const string DoomArenaMap = "doomarena";
     private const int PvPQuestID = 1063;
@@ -21,7 +21,6 @@ public class PvPArmy
     private const int QuestTempQuantity = 10;
     private const string QuestReward = "1v1 PvP Trophy";
     private const string PreferredClass = "Void Highlord";
-    private const int KillLimit = 10;
 
     private CoreBots Core => CoreBots.Instance;
     public IScriptInterface Bot => IScriptInterface.Instance;
@@ -43,7 +42,7 @@ public class PvPArmy
     private static readonly Option<bool> LoopForeverOption = new(
         "loopForever",
         "Loop Forever",
-        "Continue dueling indefinitely instead of stopping after 10 kills.",
+        "Continue dueling indefinitely after Player 1 completes the daily quest.",
         false
     );
 
@@ -96,6 +95,7 @@ public class PvPArmy
         }
 
         bool isPlayer1 = username == player1;
+        bool dailyComplete = false;
 
         EnableDuelInvites();
 
@@ -104,21 +104,29 @@ public class PvPArmy
             EquipPreferredClass();
             Core.AddDrop(QuestReward);
 
-            if (!Bot.Quests.IsDailyComplete(PvPQuestID))
+            dailyComplete = Bot.Quests.IsDailyComplete(PvPQuestID);
+            if (dailyComplete)
             {
-                Core.EnsureAccept(PvPQuestID);
-                HandlePvPQuest();
+                Core.Logger($"Daily quest {PvPQuestID} has already been completed today.");
             }
             else
             {
-                Core.Logger($"Daily quest {PvPQuestID} has already been completed today.");
+                Core.EnsureAccept(PvPQuestID);
+                dailyComplete = HandlePvPQuest();
             }
         }
 
         string syncFile = GetSyncFilePath(player1, player2);
 
         if (isPlayer1)
+        {
             ResetRoundSync(syncFile);
+            if (!loopForever && dailyComplete)
+            {
+                SignalLoopFinished(syncFile, 0);
+                return;
+            }
+        }
         else
             Bot.Skills.Stop();
 
@@ -131,7 +139,7 @@ public class PvPArmy
             else
                 return;
 
-            for (int round = 1; (loopForever || round <= KillLimit) && !Bot.ShouldExit; round++)
+            for (int round = 1; !Bot.ShouldExit; round++)
             {
                 if (isPlayer1)
                 {
@@ -142,13 +150,15 @@ public class PvPArmy
                     }
 
                     AttackPlayerUntilDefeated(player2);
-                    HandlePvPQuest();
+                    dailyComplete = HandlePvPQuest();
 
-                    if (!loopForever && round == KillLimit)
+                    if (!loopForever && dailyComplete)
                     {
-                        Core.Logger($"{KillLimit} kills completed.");
+                        SignalLoopFinished(syncFile, round);
                         break;
                     }
+
+                    SignalRoundContinuation(syncFile, round);
 
                     if (Bot.ShouldExit || !WaitForRoundReady(syncFile, round))
                         return;
@@ -156,7 +166,13 @@ public class PvPArmy
                     if (!JoinDoomArena())
                         return;
 
-                    HandlePvPQuest();
+                    dailyComplete = HandlePvPQuest();
+                    if (!loopForever && dailyComplete)
+                    {
+                        SignalLoopFinished(syncFile, round);
+                        break;
+                    }
+
                     SendDuelRequest(player2, syncFile, round);
                 }
                 else
@@ -164,11 +180,8 @@ public class PvPArmy
                     if (!WaitForDeathAndRespawn())
                         return;
 
-                    if (!loopForever && round == KillLimit)
-                    {
-                        Core.Logger($"{KillLimit} deaths completed.");
+                    if (!WaitForRoundContinuation(syncFile, round))
                         break;
-                    }
 
                     if (!JoinDoomArena())
                         return;
@@ -262,27 +275,28 @@ public class PvPArmy
         return joinedDoomArena && !Bot.ShouldExit;
     }
 
-    private void HandlePvPQuest()
+    private bool HandlePvPQuest()
     {
         if (Bot.Quests.IsDailyComplete(PvPQuestID))
-            return;
+            return true;
 
         string? currentMap = Bot.Map.Name;
         if (!string.Equals(currentMap, DoomArenaMap, StringComparison.OrdinalIgnoreCase))
-            return;
+            return false;
 
         if (!Bot.TempInv.Contains(QuestTempItem, QuestTempQuantity))
-            return;
+            return false;
 
         Core.Logger($"Turning in quest {PvPQuestID} for {QuestReward} ({QuestTempQuantity} {QuestTempItem}).");
 
         if (!Core.EnsureCompleteChoose(PvPQuestID, [QuestReward]))
         {
             Core.Logger($"Failed to turn in quest {PvPQuestID}.");
-            return;
+            return false;
         }
 
         Core.Logger($"Daily quest {PvPQuestID} completed.");
+        return true;
     }
 
     private bool WaitForPlayer(string playerName, int timeoutSeconds = 20)
@@ -322,16 +336,32 @@ public class PvPArmy
         Core.Logger($"Player 2 is ready for duel round {round + 1}.");
     }
 
+    private void SignalRoundContinuation(string syncFile, int round) =>
+        WriteSyncState(syncFile, $"continue:{round}");
+
+    private void SignalLoopFinished(string syncFile, int round)
+    {
+        WriteSyncState(syncFile, $"finished:{round}");
+        Core.Logger($"Daily quest {PvPQuestID} is complete. Duel loop finished.");
+        WaitForSyncState(syncFile, $"stopped:{round}");
+    }
+
     private bool WaitForRoundReady(string syncFile, int round)
     {
         Core.Logger($"Waiting for Player 2 to prepare duel round {round + 1}.");
         return WaitForSyncState(syncFile, $"ready:{round}");
     }
 
+    private bool WaitForRoundContinuation(string syncFile, int round)
+    {
+        Core.Logger("Waiting for Player 1 to check the daily quest.");
+        return WaitForSyncStateOrFinished(syncFile, $"continue:{round}", round);
+    }
+
     private bool WaitForChallengeSent(string syncFile, int round)
     {
         Core.Logger($"Waiting for Player 1 to send duel round {round + 1}.");
-        return WaitForSyncState(syncFile, $"challenged:{round}");
+        return WaitForSyncStateOrFinished(syncFile, $"challenged:{round}", round);
     }
 
     private void WriteSyncState(string syncFile, string state)
@@ -358,6 +388,38 @@ public class PvPArmy
             {
                 if (File.Exists(syncFile) && File.ReadAllText(syncFile).Trim() == state)
                     return true;
+            }
+            catch
+            {
+                // The other client may be writing the file; retry shortly.
+            }
+
+            Core.Sleep(250);
+        }
+
+        return false;
+    }
+
+    private bool WaitForSyncStateOrFinished(string syncFile, string state, int round)
+    {
+        while (!Bot.ShouldExit)
+        {
+            try
+            {
+                if (File.Exists(syncFile))
+                {
+                    string currentState = File.ReadAllText(syncFile).Trim();
+
+                    if (currentState == state)
+                        return true;
+
+                    if (currentState == $"finished:{round}")
+                    {
+                        Core.Logger($"Player 1 completed daily quest {PvPQuestID}. Duel loop finished.");
+                        WriteSyncState(syncFile, $"stopped:{round}");
+                        return false;
+                    }
+                }
             }
             catch
             {
