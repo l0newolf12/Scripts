@@ -71,7 +71,7 @@ public class UltraSpeakerv2
             "Taunter 1 Class",
             "Class name of Taunter 1 (fires at 0s).\n"
                 + "Name must be exact including punctuation, spelling, and capitalisation.",
-            "Lord Of Order"
+            "Lord of Order"
         ),
         new Option<string>(
             "Taunter2",
@@ -89,7 +89,7 @@ public class UltraSpeakerv2
         ),
         new Option<string>("Class1", "Class 1", "Preset class 1 to auto-equip before the fight. \nUse format: ClassName,Username. \nOnly type ClassName if you want it to be random.", "ArchPaladin"),
         new Option<string>("Class2", "Class 2", "Preset class 2 to auto-equip before the fight. \nUse format: ClassName,Username. \nOnly type ClassName if you want it to be random.", "StoneCrusher"),
-        new Option<string>("Class3", "Class 3", "Preset class 3 to auto-equip before the fight. \nUse format: ClassName,Username. \nOnly type ClassName if you want it to be random.", "Lord Of Order"),
+        new Option<string>("Class3", "Class 3", "Preset class 3 to auto-equip before the fight. \nUse format: ClassName,Username. \nOnly type ClassName if you want it to be random.", "Lord of Order"),
         new Option<string>("Class4", "Class 4", "Preset class 4 to auto-equip before the fight. \nUse format: ClassName,Username. \nOnly type ClassName if you want it to be random.", "Verus DoomKnight"),
         new Option<bool>("DoEnh", "Do Enhancements",  "Auto-Enhance Gear properly for the fight", true),
         new Option<bool>("UsePotions", "Use Potions", "Enable buying and consuming recommended potions.", true),
@@ -128,9 +128,9 @@ public class UltraSpeakerv2
         if (Bot.Config!.Get<bool>("DoEnh"))
             DoEnh();
 
-        string t1 = Bot.Config!.Get<string>("Taunter1").Trim();
-        string t2 = Bot.Config!.Get<string>("Taunter2").Trim();
-        string t3 = Bot.Config!.Get<string>("Taunter3").Trim();
+        string t1 = (Bot.Config!.Get<string>("Taunter1") ?? string.Empty).Trim();
+        string t2 = (Bot.Config!.Get<string>("Taunter2") ?? string.Empty).Trim();
+        string t3 = (Bot.Config!.Get<string>("Taunter3") ?? string.Empty).Trim();
         string cn = className ?? string.Empty;
         bool isTaunter = cn.Equals(t1, StringComparison.OrdinalIgnoreCase)
             || cn.Equals(t2, StringComparison.OrdinalIgnoreCase)
@@ -286,22 +286,22 @@ public class UltraSpeakerv2
             }
 
             // Combat logic - only attack if monster exists
-            if (Bot.Monsters.CurrentMonsters.Any(m => m.Name == "The First Speaker" && m.Alive))
+            if (Bot.Monsters.CurrentMonsters?.Any(m => m != null && m.Name == "The First Speaker" && m.Alive) == true)
             {
                 Bot.Combat.Attack("The First Speaker");
 
                 Pots.ActivateEquippedPotion();
 
                 // Timer-based taunt rotation — only for taunters
-                string cn = Bot.Player.CurrentClass?.Name ?? string.Empty;
-                string t1 = Bot.Config!.Get<string>("Taunter1").Trim();
-                string t2 = Bot.Config!.Get<string>("Taunter2").Trim();
-                string t3 = Bot.Config!.Get<string>("Taunter3").Trim();
+                string cn = Bot.Player?.CurrentClass?.Name ?? string.Empty;
+                string t1 = (Bot.Config!.Get<string>("Taunter1") ?? string.Empty).Trim();
+                string t2 = (Bot.Config!.Get<string>("Taunter2") ?? string.Empty).Trim();
+                string t3 = (Bot.Config!.Get<string>("Taunter3") ?? string.Empty).Trim();
                 bool isTaunter = cn.Equals(t1, StringComparison.OrdinalIgnoreCase)
                     || cn.Equals(t2, StringComparison.OrdinalIgnoreCase)
                     || cn.Equals(t3, StringComparison.OrdinalIgnoreCase);
 
-                if (isTaunter && Bot.Player.HasTarget)
+                if (isTaunter && Bot.Player?.HasTarget == true)
                 {
                     TimeSpan timeSinceFightStart = DateTime.Now - fightStartTime;
                     double currentTime = timeSinceFightStart.TotalSeconds;

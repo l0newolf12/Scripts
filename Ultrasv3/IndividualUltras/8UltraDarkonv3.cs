@@ -41,7 +41,7 @@ public class UltraDarkonv3
     private static string _fbsMuteFile = "";
 
     private const string Taunter1 = "Verus DoomKnight";
-    private const string Taunter2 = "Lord Of Order";
+    private const string Taunter2 = "Lord of Order";
     // DPS classes
     private const string Dps1 = "StoneCrusher";
     private const string Dps2 = "King's Echo";
@@ -58,7 +58,7 @@ public class UltraDarkonv3
     private CancellationTokenSource _wipeCts = new();
     private System.Threading.ManualResetEvent _retreatComplete = new(false);
     private UltraDeath.RetryCounter _deathRetries = new();
-    private const int MaxDeathRetries = 3;
+    private const int MaxDeathRetries = 10;
     private DateTime fightStartTime = DateTime.MinValue;
 
     public void ScriptMain(IScriptInterface bot)

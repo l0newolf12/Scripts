@@ -6,7 +6,7 @@ tags: ultra, army, two-player, usurper, kolr, usurper of flames, verus doomknigh
 
 //cs_include Scripts/CoreBots.cs
 //cs_include Scripts/CoreAdvanced.cs
-//cs_include Scripts/Ultrasv3/Entwined Eclipse/CoreUltra.cs
+//cs_include Scripts/Ultras/CoreUltra.cs
 
 using System;
 using System.Collections.Generic;
@@ -24,7 +24,7 @@ public class LoneWolf_UltraUsurper
     public IScriptInterface Bot => IScriptInterface.Instance;
     private CoreBots Core => CoreBots.Instance;
     private CoreAdvanced Adv = new();
-    private CoreUltra Ultra = new();
+    public CoreUltrav1 Ultra = new();
 
     public bool DontPreconfigure = true;
     public string OptionsStorage = "LoneWolf_UltraUsurper";
@@ -59,7 +59,7 @@ public class LoneWolf_UltraUsurper
     private const string HollowbornVindicatorClass = "Hollowborn Vindicator";
     private const string ChaosAvengerClass = "Chaos Avenger";
     private const string ArchPaladinClass = "ArchPaladin";
-    private const string Player2Class = "Lord Of Order";
+    private const string Player2Class = "Lord of Order";
 
     private const string ScrollName = "Scroll of Enrage";
     private const string HonorPotionName = "Potent Honor Potion";
@@ -146,8 +146,8 @@ public class LoneWolf_UltraUsurper
         ),
         new Option<string>(
             "player2",
-            "Player 2 - Lord Of Order",
-            "Username assigned to Player 2 using Lord Of Order.",
+            "Player 2 - Lord of Order",
+            "Username assigned to Player 2 using Lord of Order.",
             ""
         ),
         new Option<DpsClass>(

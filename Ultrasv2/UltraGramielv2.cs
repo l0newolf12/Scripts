@@ -92,7 +92,7 @@ public class UltraGramielv2
             "RightCrystalT1",
             "Right Crystal — T1 Taunter",
             "Class name for the Right Crystal T1 taunter.",
-            "Lord Of Order"
+            "Lord of Order"
         ),
 
         new Option<string>(
@@ -111,7 +111,7 @@ public class UltraGramielv2
 
         new Option<string>("Class1", "Class 1", "Preset class 1 to auto-equip before the fight. \nUse format: ClassName,Username. \nOnly type ClassName if you want it to be random.", "ArchPaladin"),
         new Option<string>("Class2", "Class 2", "Preset class 2 to auto-equip before the fight. \nUse format: ClassName,Username. \nOnly type ClassName if you want it to be random.", "StoneCrusher"),
-        new Option<string>("Class3", "Class 3", "Preset class 3 to auto-equip before the fight. \nUse format: ClassName,Username. \nOnly type ClassName if you want it to be random.", "Lord Of Order"),
+        new Option<string>("Class3", "Class 3", "Preset class 3 to auto-equip before the fight. \nUse format: ClassName,Username. \nOnly type ClassName if you want it to be random.", "Lord of Order"),
         new Option<string>("Class4", "Class 4", "Preset class 4 to auto-equip before the fight. \nUse format: ClassName,Username. \nOnly type ClassName if you want it to be random.", "King's Echo"),
 
         new Option<bool>("DoEnh", "Do Enhancements", "Auto-Enhance gear before the fight.", true),
@@ -151,10 +151,10 @@ public class UltraGramielv2
 
     private void ApplyTaunterClasses()
     {
-        string leftT1Class = Bot.Config!.Get<string>("LeftCrystalT1").Trim();
-        string rightT1Class = Bot.Config!.Get<string>("RightCrystalT1").Trim();
-        string leftT2Class = Bot.Config!.Get<string>("LeftCrystalT2").Trim();
-        string rightT2Class = Bot.Config!.Get<string>("RightCrystalT2").Trim();
+        string leftT1Class = (Bot.Config!.Get<string>("LeftCrystalT1") ?? string.Empty).Trim();
+        string rightT1Class = (Bot.Config!.Get<string>("RightCrystalT1") ?? string.Empty).Trim();
+        string leftT2Class = (Bot.Config!.Get<string>("LeftCrystalT2") ?? string.Empty).Trim();
+        string rightT2Class = (Bot.Config!.Get<string>("RightCrystalT2") ?? string.Empty).Trim();
 
         string className = Bot.Player.CurrentClass?.Name ?? string.Empty;
 

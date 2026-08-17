@@ -100,6 +100,7 @@ public class QueenIona
         // Always private
         C.Join(map + -100000, "r2", "Left");
         Core.ChooseBestCell(boss);
+         
         Bot.Player!.SetSpawnPoint();
 
         if (!IsVHL)

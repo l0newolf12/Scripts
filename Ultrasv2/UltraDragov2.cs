@@ -89,7 +89,7 @@ public class UltraDragov2
 
         new Option<string>("Class1", "Class 1", "Preset class 1 to auto-equip before the fight. \nUse format: ClassName,Username. \nOnly type ClassName if you want it to be random.", "ArchPaladin"),
         new Option<string>("Class2", "Class 2", "Preset class 2 to auto-equip before the fight. \nUse format: ClassName,Username. \nOnly type ClassName if you want it to be random.", "StoneCrusher"),
-        new Option<string>("Class3", "Class 3", "Preset class 3 to auto-equip before the fight. \nUse format: ClassName,Username. \nOnly type ClassName if you want it to be random.", "Lord Of Order"),
+        new Option<string>("Class3", "Class 3", "Preset class 3 to auto-equip before the fight. \nUse format: ClassName,Username. \nOnly type ClassName if you want it to be random.", "Lord of Order"),
         new Option<string>("Class4", "Class 4", "Preset class 4 to auto-equip before the fight. \nUse format: ClassName,Username. \nOnly type ClassName if you want it to be random.", "King's Echo"),
 
         new Option<bool>(
@@ -111,10 +111,10 @@ public class UltraDragov2
         CoreBots.Instance.SkipOptions,
     };
 
-    private string NormalizeString(string input) =>
+    private string NormalizeString(string? input) =>
         (input ?? "").Trim().ToLower();
 
-    bool HasAssignedClass(string assignedClass) =>
+    bool HasAssignedClass(string? assignedClass) =>
         NormalizeString(Bot.Player.CurrentClass?.Name)
         == NormalizeString(assignedClass);
 
@@ -154,10 +154,10 @@ public class UltraDragov2
         Astravia.AstraviaJudgement();
 
         string primaryTaunter =
-            Bot.Config!.Get<string>("PrimaryTaunter");
+            (Bot.Config!.Get<string>("PrimaryTaunter") ?? string.Empty).Trim();
 
         string secondaryTaunter =
-            Bot.Config!.Get<string>("SecondaryTaunter");
+            (Bot.Config!.Get<string>("SecondaryTaunter") ?? string.Empty).Trim();
 
         isPrimaryTaunter = HasAssignedClass(primaryTaunter);
 
@@ -222,7 +222,8 @@ public class UltraDragov2
         int armySize = Math.Max(1, Bot.Config!.Get<int>("ArmySize"));
         Ultra.WaitForArmy(armySize - 1, "ultra_drago.sync");
 
-        Core.ChooseBestCell(boss);
+        var (bestCell, _) = Core.ChooseBestCell(boss);
+
 
         Bot.Player.SetSpawnPoint();
 

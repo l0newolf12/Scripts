@@ -44,7 +44,7 @@ public class AstralEmpyreanv3
     private DateTime fightStartTime = DateTime.MinValue;
     private string _role = "";
     private int _deathRetries = 0;
-    private const int MaxDeathRetries = 3;
+    private const int MaxDeathRetries = 10;
     public bool DontPreconfigure = true;
     public string OptionsStorage = "AstralEmpyreanv3";
     public string[] MultiOptions = { "SelectDrops" };
@@ -57,10 +57,10 @@ public class AstralEmpyreanv3
         new Option<int>("ArmySize", "Army Size", "How many players are in your army (including yourself).", 4),
         new Option<bool>("DoDailyOnly", "Do Daily Only", "True: do the daily quest only. False: farm selected drops instead.", true),
         new Option<string>("Taunter1Class", "Taunter 1 Class (Primary)", "Class name for Taunter 1 (sets fight start time).", "Verus DoomKnight"),
-        new Option<string>("Taunter2Class", "Taunter 2 Class (Secondary)", "Class name for Taunter 2.", "Lord Of Order"),
+        new Option<string>("Taunter2Class", "Taunter 2 Class (Secondary)", "Class name for Taunter 2.", "Lord of Order"),
         new Option<string>("Taunter3Class", "Taunter 3 Class (Tertiary)", "Class name for Taunter 3.", "ArchPaladin"),
         new Option<string>("Class1", "Class 1", "Preset class 1 to auto-equip before the fight.\nUse format: ClassName,Username.\nOnly type ClassName if you want it to be random.", "ArchPaladin"),
-        new Option<string>("Class2", "Class 2", "Preset class 2 to auto-equip before the fight.\nUse format: ClassName,Username.\nOnly type ClassName if you want it to be random.", "Lord Of Order"),
+        new Option<string>("Class2", "Class 2", "Preset class 2 to auto-equip before the fight.\nUse format: ClassName,Username.\nOnly type ClassName if you want it to be random.", "Lord of Order"),
         new Option<string>("Class3", "Class 3", "Preset class 3 to auto-equip before the fight.\nUse format: ClassName,Username.\nOnly type ClassName if you want it to be random.", "StoneCrusher"),
         new Option<string>("Class4", "Class 4", "Preset class 4 to auto-equip before the fight.\nUse format: ClassName,Username.\nOnly type ClassName if you want it to be random.", "Verus DoomKnight"),
         new Option<string>("Class5", "Class 5", "Preset class 5 to auto-equip before the fight.\nUse format: ClassName,Username.\nOnly type ClassName if you want it to be random.", ""),
@@ -234,12 +234,11 @@ public class AstralEmpyreanv3
 
         const string waitSyncFile = "AstralEmpyreanv3.sync";
         const string completionSyncFile = "AstralEmpyreanv3Completion.sync";
-        const string retreatSyncFile = "AstralEmpyreanv3Retreat.sync";
         const string killSyncFile = "AstralEmpyreanKill.sync";
         const string wipeSyncFile = "AstralEmpyreanWipe.sync";
         int armySize = Math.Max(1, Bot.Config!.Get<int>("ArmySize"));
 
-        
+
         const int questId = 9803;
 
         bool dailyOnly = DoDailyOnly;
@@ -301,8 +300,10 @@ public class AstralEmpyreanv3
             UltraAsync.StartTauntLoop(Bot, C, Engine, fightStartTime, 2, 3, cancellationToken: _tauntCts.Token);
         }
 
-        if (!dailyOnly)
-            Bot.Events.ExtensionPacketReceived += AstralZoneListener;
+        // Zone listener must be active in BOTH modes — the zone mechanic (A/B safe boxes)
+        // applies whether we're doing the daily or farming drops. Dying to the zone
+        // mechanic fails the fight either way.
+        Bot.Events.ExtensionPacketReceived += AstralZoneListener;
         Bot.Sleep(2000);
 
         // Pre-seed completion sync file so all 4 entries exist before the loop starts.

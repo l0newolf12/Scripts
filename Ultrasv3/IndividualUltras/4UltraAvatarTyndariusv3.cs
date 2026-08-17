@@ -37,7 +37,7 @@ public class UltraAvatarTyndariusv3
     private static UltraDeath _Death;
 
     private const string Ball1TaunterAttackBall2 = "Verus DoomKnight";
-    private const string Ball2TaunterAttackBall2 = "Lord Of Order";
+    private const string Ball2TaunterAttackBall2 = "Lord of Order";
     private const string Ball2Attacker1 = "StoneCrusher";
     private const string Ball2Attacker2 = "King's Echo";
 
@@ -53,7 +53,7 @@ public class UltraAvatarTyndariusv3
     private CancellationTokenSource _wipeCts = new();
     private System.Threading.ManualResetEvent _retreatComplete = new(false);
     private UltraDeath.RetryCounter _deathRetries = new();
-    private const int MaxDeathRetries = 3;
+    private const int MaxDeathRetries = 10;
     private DateTime fightStartTime = DateTime.MinValue;
     private string _role = "";
 

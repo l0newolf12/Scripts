@@ -86,11 +86,11 @@ public class UltraDailies
         new Option<string>("Ball1Taunter", "Ball 1 Taunter", "Class name that taunts Ball 1 (left orb).", "StoneCrusher"),
         new Option<string>("Ball2Killer", "Ball 2 Killer", "Class name that kills Ball 2 (right orb).", "King's Echo"),
         new Option<string>("TynTaunter1", "Tyndarius Taunter 1", "Class name of Tyndarius Taunter 1 (fires at 0s).", "ArchPaladin"),
-        new Option<string>("TynTaunter2", "Tyndarius Taunter 2", "Class name of Tyndarius Taunter 2 (fires at 5s).", "Lord Of Order"),
+        new Option<string>("TynTaunter2", "Tyndarius Taunter 2", "Class name of Tyndarius Taunter 2 (fires at 5s).", "Lord of Order"),
 
         new Option<string>("Class1", "Class 1", "Preset class 1 to auto-equip before the fight. Use format: ClassName,Username. Only type ClassName if you want it to be random.", "ArchPaladin"),
         new Option<string>("Class2", "Class 2", "Preset class 2 to auto-equip before the fight. Use format: ClassName,Username. Only type ClassName if you want it to be random.", "StoneCrusher"),
-        new Option<string>("Class3", "Class 3", "Preset class 3 to auto-equip before the fight. Use format: ClassName,Username. Only type ClassName if you want it to be random.", "Lord Of Order"),
+        new Option<string>("Class3", "Class 3", "Preset class 3 to auto-equip before the fight. Use format: ClassName,Username. Only type ClassName if you want it to be random.", "Lord of Order"),
         new Option<string>("Class4", "Class 4", "Preset class 4 to auto-equip before the fight. Use format: ClassName,Username. Only type ClassName if you want it to be random.", "King's Echo"),
 
         new Option<bool>("DoEnh", "Do Enhancements", "Auto-Enhance Gear properly for the fight", true),
@@ -386,8 +386,8 @@ public class UltraDailies
         }
     }
 
-    private string NormalizeString(string input) => (input ?? string.Empty).Trim().ToLowerInvariant();
-    private bool HasAssignedClass(string assignedClass) =>
+    private string NormalizeString(string? input) => (input ?? string.Empty).Trim().ToLowerInvariant();
+    private bool HasAssignedClass(string? assignedClass) =>
         NormalizeString(Bot.Player.CurrentClass?.Name) == NormalizeString(assignedClass);
 
     private void EquipPresetClasses(string syncFile, int armySize) =>
@@ -489,7 +489,8 @@ public class UltraDailies
         Core.Join(map);
         int armySize = GetBossParticipantCount("UltraEzrajal");
         Ultra.WaitForArmy(armySize - 1, "ultra_ezrajal.sync");
-        Core.ChooseBestCell(boss);
+        var (bestCell, _) = Core.ChooseBestCell(boss);
+
         Bot.Player.SetSpawnPoint();
         Core.EnableSkills();
 
@@ -602,7 +603,8 @@ public class UltraDailies
         Core.Join(map);
         int armySize = GetBossParticipantCount("UltraWarden");
         Ultra.WaitForArmy(armySize - 1, "ultra_warden.sync");
-        Core.ChooseBestCell(boss);
+        var (bestCell, _) = Core.ChooseBestCell(boss);
+
         Bot.Player.SetSpawnPoint();
         Core.EnableSkills();
 
@@ -720,7 +722,8 @@ public class UltraDailies
         Core.Join(map);
         int armySize = GetBossParticipantCount("UltraEngineer");
         Ultra.WaitForArmy(armySize - 1, "ultra_engineer.sync");
-        Core.ChooseBestCell(boss);
+        var (bestCell, _) = Core.ChooseBestCell(boss);
+
         Bot.Player.SetSpawnPoint();
         Core.EnableSkills();
 
@@ -828,7 +831,8 @@ public class UltraDailies
         Core.Join(map);
         int armySize = GetBossParticipantCount("UltraAvatarTyndarius");
         Ultra.WaitForArmy(armySize - 1, "ultra_tyndarius.sync");
-        Core.ChooseBestCell(boss);
+        var (bestCell, _) = Core.ChooseBestCell(boss);
+
         Core.EnableSkills();
 
         bool armyWipeDetected = false;

@@ -45,7 +45,7 @@ public class MasakadoKingsEchoArmy
         new Option<string>("player1", "King's Echo",    "AQW account name for the King's Echo slot. Falls back to LR → Arcana Invoker → ArchMage if KE is missing.", ""),
         new Option<string>("player2", "StoneCrusher",  "AQW account name for the StoneCrusher slot. Falls back to ArchPaladin → LoO → LR.", ""),
         new Option<string>("player3", "Legion Revenant", "AQW account name for the Legion Revenant slot. Falls back to ArchPaladin → LoO → LightCaster.", ""),
-        new Option<string>("player4", "Lord Of Order", "AQW account name for the Lord Of Order slot. Falls back to ArchPaladin → LightCaster → LR.", ""),
+        new Option<string>("player4", "Lord of Order", "AQW account name for the Lord of Order slot. Falls back to ArchPaladin → LightCaster → LR.", ""),
         sArmy.packetDelay,
         CoreBots.Instance.SkipOptions,
         new Option<bool>(
@@ -90,7 +90,7 @@ public class MasakadoKingsEchoArmy
     const string ArchMage = "ArchMage";
     const string ArchPaladin = "ArchPaladin";
     const string StoneCrusher = "StoneCrusher";
-    const string LordOfOrder = "Lord Of Order";
+    const string LordOfOrder = "Lord of Order";
     const string LightCaster = "LightCaster";
     static readonly string[] FallbackClasses = new[]
     {
@@ -292,10 +292,10 @@ public class MasakadoKingsEchoArmy
             return FirstOwned(LegionRevenant, ArchPaladin, LordOfOrder, LightCaster);
 
         if (username.Equals(p4, StringComparison.OrdinalIgnoreCase))
-            return FirstOwned(LordOfOrder, ArchPaladin, LightCaster, LegionRevenant);
+            return FirstOwned(LightCaster, LordOfOrder, ArchPaladin, LegionRevenant);
 
         Core.Logger($"{username} was not matched to an army slot; using solo fallback selection.");
-        return FirstOwned(KingsEcho, LegionRevenant, ArchMage, "Arcana Invoker", ArchPaladin, LordOfOrder, LightCaster);
+        return FirstOwned(KingsEcho, LegionRevenant, ArchMage, "Arcana Invoker", ArchPaladin, LightCaster, LordOfOrder);
     }
 
     string FirstOwned(params string[] classNames)
@@ -334,7 +334,7 @@ public class MasakadoKingsEchoArmy
             "arcana invoker" => "4|3|5|3|5|3|5",
             "lightcaster" => "4|2|3|5|2|3|4|5",
             "archpaladin" => "4|2|3|5|2|4|3",
-            "lord of order" => "2|3|4|5|2|3|4",
+            "Lord of Order" => "2|3|4|5|2|3|4",
             "stonecrusher" => "3|4|2|5|3|4|2",
             "verus doomknight" => "2|3|4|5|2|3|4",
             "cavern celestite" => "2|3|4|5|2|3|4",
@@ -528,7 +528,7 @@ public class MasakadoKingsEchoArmy
         {
             "king's echo" => 4,
             "archpaladin" => 4,
-            "lord of order" => 4,
+            "Lord of Order" => 4,
             "lightcaster" => 4,
             "stonecrusher" => 3,
             _ => 0

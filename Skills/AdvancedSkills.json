@@ -830,7 +830,7 @@
   },
   "Bard": {
     "Base": {
-      "skillUseMode": "UseIfAvailable",
+      "skillUseMode": "WaitForCooldown",
       "skillTimeout": 100,
       "skills": [
         {
@@ -1235,13 +1235,19 @@
           "skillId": 4
         },
         {
-          "skillId": 3
+          "skillId": 1
+        },
+        {
+          "skillId": 2
+        },
+	{
+          "skillId": 4
         },
         {
           "skillId": 1
         },
         {
-          "skillId": 2
+          "skillId": 3
         }
       ]
     }
@@ -5653,7 +5659,7 @@
       ]
     }
   },
-  "Lord Of Order": {
+  "Lord of Order": {
     "Base": {
       "skillUseMode": "UseIfAvailable",
       "skillTimeout": 100,

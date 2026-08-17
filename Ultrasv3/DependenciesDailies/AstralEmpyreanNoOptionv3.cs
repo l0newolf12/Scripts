@@ -40,7 +40,7 @@ public class AstralEmpyreanNoOpv3
     private static string _fbsMuteFile = "";
 
     private const string Taunter1 = "Verus DoomKnight";
-    private const string Taunter2 = "Lord Of Order";
+    private const string Taunter2 = "Lord of Order";
     private const string Taunter3 = "ArchPaladin";
     private const string Dps1 = "StoneCrusher";
 
@@ -56,7 +56,7 @@ public class AstralEmpyreanNoOpv3
     private DateTime fightStartTime = DateTime.MinValue;
     private string _role = "";
     private int _deathRetries = 0;
-    private const int MaxDeathRetries = 3;
+    private const int MaxDeathRetries = 10;
 
     public void ScriptMain(IScriptInterface bot)
     {
@@ -155,7 +155,6 @@ public class AstralEmpyreanNoOpv3
 
         const string waitSyncFile = "AstralEmpyreanv3.sync";
         const string completionSyncFile = "AstralEmpyreanv3Completion.sync";
-        const string retreatSyncFile = "AstralEmpyreanv3Retreat.sync";
         const string wipeSyncFile = "AstralEmpyreanWipe.sync";
         int armySize = 4;
 

@@ -43,7 +43,7 @@ public class UltraGramielv3
     // Crystal taunter roles — 2 groups (T1 and T2) across 2 crystals (left and right)
     private const string LeftCrystalT1 = "StoneCrusher";
     private const string RightCrystalT1 = "ArchPaladin";
-    private const string LeftCrystalT2 = "Lord Of Order";
+    private const string LeftCrystalT2 = "Lord of Order";
     private const string RightCrystalT2 = "ArchFiend";
 
     private static readonly string[][] UltraClassesByRole =
@@ -58,14 +58,13 @@ public class UltraGramielv3
     private CancellationTokenSource _wipeCts = new();
     private System.Threading.ManualResetEvent _retreatComplete = new(false);
     private UltraDeath.RetryCounter _deathRetries = new();
-    private const int MaxDeathRetries = 3;
+    private const int MaxDeathRetries = 10;
     private DateTime fightStartTime = DateTime.MinValue;
     private DateTime _gramielFightStart = DateTime.MinValue;
     private int _gramielTaunterIndex = 0;
     private bool _gramielTauntLaunched = false;
     private int crystalMapId = 2;
     private bool isT1Taunter = true;
-    private bool isTaunter = false;
 
     // Chat-driven crystal state (Speaker-style: message → fire async)
     private int tauntCounter = 0;
@@ -149,7 +148,6 @@ public class UltraGramielv3
         if (className.Equals(LeftCrystalT1, StringComparison.OrdinalIgnoreCase))
         {
             crystalMapId = 2;
-            isTaunter = true;
             isT1Taunter = true;
             _gramielTaunterIndex = 0;
             C.Logger($"[UltraGramiel-v3] Assigned to taunt LEFT crystal (mapId=2) - T1 (Gramiel taunter index 0)");
@@ -157,7 +155,6 @@ public class UltraGramielv3
         else if (className.Equals(LeftCrystalT2, StringComparison.OrdinalIgnoreCase))
         {
             crystalMapId = 2;
-            isTaunter = true;
             isT1Taunter = false;
             _gramielTaunterIndex = 1;
             C.Logger($"[UltraGramiel-v3] Assigned to taunt LEFT crystal (mapId=2) - T2 (Gramiel taunter index 1)");
@@ -165,7 +162,6 @@ public class UltraGramielv3
         else if (className.Equals(RightCrystalT1, StringComparison.OrdinalIgnoreCase))
         {
             crystalMapId = 3;
-            isTaunter = true;
             isT1Taunter = true;
             _gramielTaunterIndex = 2;
             C.Logger($"[UltraGramiel-v3] Assigned to taunt RIGHT crystal (mapId=3) - T1 (Gramiel taunter index 2)");
@@ -173,7 +169,6 @@ public class UltraGramielv3
         else if (className.Equals(RightCrystalT2, StringComparison.OrdinalIgnoreCase))
         {
             crystalMapId = 3;
-            isTaunter = true;
             isT1Taunter = false;
             _gramielTaunterIndex = 3;
             C.Logger($"[UltraGramiel-v3] Assigned to taunt RIGHT crystal (mapId=3) - T2 (Gramiel taunter index 3)");
@@ -181,7 +176,6 @@ public class UltraGramielv3
         else
         {
             crystalMapId = 2;
-            isTaunter = false;
             isT1Taunter = true;
             _gramielTaunterIndex = 0;
             C.Logger($"[UltraGramiel-v3] Class '{className}' not a taunter, defaulting to LEFT crystal DPS.");
